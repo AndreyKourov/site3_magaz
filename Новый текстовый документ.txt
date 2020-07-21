@@ -1,0 +1,5 @@
+https://tproger.ru/translations/how-to-configure-and-use-pdo/
+
+
+
+http://blog.ox2.ru/php/rabota-s-csv-php/
