@@ -47,6 +47,36 @@ class Tools {
         $customer->intoDb();
         return true;
     }
+
+    static function login($login, $pass) {
+        $name = trim(utf8_encode(htmlspecialchars($login)));
+        $pass = trim(utf8_encode(htmlspecialchars($pass)));
+    
+        if ($name == "" || $pass == "") {
+            echo "<h3 class='text-danger'>Заполните все поля</h3>";
+            return false;
+        }
+        
+        if(strlen($name) < 3 || strlen($name) > 30 || strlen($pass) < 3 || strlen($pass) > 30) {
+            echo "<h3 class='text-danger'>От 0 до 30 символов</h3>";
+            return false;
+        }
+    
+        $pdo = Tools::connect();
+        $ps = $pdo->prepare("SELECT login, pass, roleid FROM customers WHERE login='$name'");
+        $ps->execute();      
+        while($row = $ps->fetch()) {
+            if($name == $row['login'] && $pass == $row['pass']) {
+                $_SESSION['ruser'] = $name;
+                if($row['roleid'] == 1) { 
+                    $_SESSION['radmin'] = $name; 
+                } 
+                return true;
+            } else {
+                return false;
+            } 
+        }
+    }
 }
 
 class Customer {
@@ -75,7 +105,7 @@ class Customer {
         try {
             $pdo = Tools::connect();
             //выполнение запроса через PDO на внесение данных
-            $ps = $pdo->prepare("INSERT INTO customers( login, pass, roleid, discount, total, imagepath) VALUE (:login, :pass, :roleid, :discount, :total, :imagepath)");
+            $ps = $pdo->prepare("INSERT INTO customers(login, pass, roleid, discount, total, imagepath) VALUES (:login, :pass, :roleid, :discount, :total, :imagepath)");
 
             //разименование массива. Мы преобразуем обьект класса $this в массив
             $ar = (array) $this;
@@ -141,7 +171,7 @@ class Item {
         try {
             $pdo = Tools::connect();
             //выполнение запроса через PDO на внесение данных
-            $ps = $pdo->prepare("INSERT INTO items( itemname, catid, pricein, pricesale, info, imagepath, rate, action) VALUE (:itemname, :catid, :pricein, :pricesale, :info, :imagepath, :rate, :action)");
+            $ps = $pdo->prepare("INSERT INTO items( itemname, catid, pricein, pricesale, info, imagepath, rate, action) VALUES (:itemname, :catid, :pricein, :pricesale, :info, :imagepath, :rate, :action)");
         
             $ar = (array) $this;
             array_shift($ar);
@@ -194,7 +224,32 @@ class Item {
     }
 
     function drawItem() {
-        echo '<div class="col-sm-6 col-md-3 item-card border">';
+
+        echo '<div class="col-sm-6 col-md-4 col-lg-3 item-card mb-3">';
+            echo '<img class="card-img-top item-card__img" src="'.$this->imagepath.'" alt="Card image cap">';
+            echo '<div class="card-body">';
+                echo '<h4 class="card-title">'.$this->pricesale.'&nbsp;$</h4>';
+                    
+                    echo "<div class='row item-card__title'>
+                        <a href='pages/item_info.php?name=".$this->id."' class='ml-2 float-left' target='_blank'>".$this->itemname."</a>";
+                    echo "<span class='float-right mr-0 ml-auto'>".$this->rate."&nbsp;rate</span>";
+                    echo '</div>';
+                
+                    echo '<p class="card-text">'.$this->info.'</p>';
+                
+                echo '<div class="my-1 text-justify item-card__cart">';
+                $ruser = '';
+                if(!isset($_SESSION['ruser'])) {
+                    $ruser = 'cart_'.$this->id;
+                } else {$ruser = $_SESSION['ruser']."_".$this->id;}
+                echo "<button class='btn btn-outline-primary btn-block' onclick=createCookie('".$ruser."','".$this->id."')>Add to cart</button>";
+                echo '</div>';
+
+            echo '</div>';
+        echo '</div>';
+
+        /*
+        echo '<div class="col-sm-6 col-md-3 item-card border mb-4">';
             //верхушка товара
             echo '<div class="mt-1 bg-dark">';
             echo "<a href='pages/item_info.php?name=".$this->id."' class='ml-2 float-left' target='_blank'>".$this->itemname."</a>";
@@ -202,13 +257,15 @@ class Item {
             echo '</div>';
         
             //изображение товара
+            echo '<div clss="row">';
             echo "<div class='mt-1 item-card__img'>";
             echo "<img src='".$this->imagepath."' class='img-fluid'>";
+            echo '</div>';
             echo '</div>';
 
             //цена товара
             echo "<div class='mt-1 text-center item-card__price'>";
-            echo "<span>".$this->pricesale." </span>";
+            echo '<span class="mr-3 float-right">'.$this->pricesale.' </span>';
             echo '</div>';
 
             //описание товара
@@ -219,23 +276,25 @@ class Item {
             // кнопка добавления в корзину
             echo "<div class='mt-1 text-justify bg-primary item-card__basket'>";
             $ruser = '';
+            //проверка на зареистрированного пользователя 
+            if(!isset($_SESSION['ruser'])) {
+                $ruser = 'cart_'.$this->id;
+            } else {$ruser = $_SESSION['ruser']."_".$this->id;}
 
             /*
-            //проверка на зареистрированного пользователя 
-            
             if(!isset($_SESSION['reg'] || $_SESSION['reg'] == '')) {
                 $ruser = 'cart_'.$this->id;
             } else {
                 $ruser = $_SESSION['reg'] . "_" . $this->id;
-            }
-            */
+            }         
             $ruser = 'cart_'.$this->id; // потом убрать после раскомента выше
+            */
+            //echo "<button class='btn btn-primary btn-lg btn-block' onclick=createCookie('".$ruser."','".$this->id."')>Add to cart</button>";
+            //echo '</div>';
 
-            echo "<button class='btn btn-primary btn-lg btn-block' onclick=createCookie('".$ruser."','".$this->id."')>Add to cart</button>";
-            echo '</div>';
 
-
-        echo '</div>';
+        //echo '</div>';
+    
     }
 
     // меод для отрисовки выбранных товаров в корзине
@@ -244,7 +303,10 @@ class Item {
         echo "<img src='".$this->imagepath."' class='col-1 img-fluid'>";
         echo "<span class='col-3'>$this->itemname</span>";
         echo "<span class='col-3'>$this->pricesale</span>";
-        $ruser = "cart_".$this->id;
+        //$ruser = "cart_".$this->id;
+        if(!isset($_SESSION['ruser'])) {
+            $ruser = 'cart_'.$this->id;
+        } else {$ruser = $_SESSION['ruser']."_".$this->id;}
         echo "<button class='btn btn-danger' onclick=eraseCookie('".$ruser."')>x</button>";
         echo "</div>";
     }
@@ -253,10 +315,14 @@ class Item {
     function sale() {
         try {
             $pdo = Tools::connect();
-            $ruser = 'admin';
+            //$ruser = 'admin';
             //if(isset($_SESSION['reg'] && $_SESSION['reg'] !== '')) {
             //    $ruser = $_SESSION['reg'];
             //}
+            $ruser = 'cart';
+            if(isset($_SESSION['ruser'])) {
+                $ruser = $_SESSION['ruser'];
+            }
             //изменить у покупатедя общу стоимость купленных товароов
             $upd = "UPDATE customers SET total=total+? WHERE login=?";
             $ps = $pdo->prepare($upd);

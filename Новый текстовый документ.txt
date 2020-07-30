@@ -1,5 +1,7 @@
 https://tproger.ru/translations/how-to-configure-and-use-pdo/
 
 
+https://github.com/carhartl/jquery-cookie
+
 
 http://blog.ox2.ru/php/rabota-s-csv-php/

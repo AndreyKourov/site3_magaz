@@ -4,7 +4,12 @@ if(!isset($_POST['addbtn'])) {
 
 ?>
 
+<h3>Admin Forms</h3>
+<hr>
+
+
 <form action="index.php?page=4" method="post" enctype="multipart/form-data">
+    
     <label for="catid">Category:
         <select name="catid" id="">
             <?php
@@ -18,37 +23,55 @@ if(!isset($_POST['addbtn'])) {
             ?>
         </select>
         </label>
+    
 
+    
         <div class="form-group">
             <label for="name">
-                <input type="text" name="name"> 
+                <input type="text" placeholder="input name"  name="name"> 
             </label>
         </div>
+    
 
+    
         <div class="form-group">
              <p>Incoming price and sale price</p>
             <div>
-            <input type="number" name="pricein"> 
-                <input type="text" name="pricesale"> 
+                <input type="number" name="pricein"> 
+            </div>
+            
+            
+        </div>
+     
+
+      
+        <div class="form-group">
+            <div>
+                <input type="text" placeholder="pricesale" name="pricesale"> 
             </div>
         </div>
+         
 
+           
         <div class="form-group">
             <label for="info">
-                <textarea class="d-block" name="info" id="info" cols="30" rows="10"></textarea>
+                <textarea class="d-block" name="info" id="info" cols="30" rows="10" placeholder="enter a description"></textarea>
             </label>
         </div>
+         
 
+              
         <div class="form-group">
             <label for="imagepath">
                 <input type="file" name="imagepath"> 
             </label>
         </div>
-
-        <button type="submit" class="btn btn-primary" name="addbtn">Add good</button>
+            
+        <button type="submit" class="btn btn-outline-primary" name="addbtn">Add good</button>
 
     
 </form>
+
 
 <?php
 } else {

@@ -4,7 +4,11 @@
 echo '<form action="index.php?page=2" method="post">';
 
 // проверка текущего имени пользователя
+if(!isset($_SESSION['ruser'])) {
 $ruser = 'cart';
+} else {
+    $ruser = $_SESSION['ruser'];
+}
 
 // формирем корзину и сумарню стоимость товаров
 $total = 0;
@@ -27,7 +31,7 @@ foreach($_COOKIE as $k => $v) {
 
 echo '<hr>';
 echo "<span class='ml-5 text-primary'>Total price: $total</span>";
-echo '<button type="submit" class="btn btn-primary btn-lg ml-5" name="suborder" onclick=eraseCookie("'.$ruser.'")>Purchase order</button>';
+echo '<button type="submit" class="btn btn-outline-primary ml-5" name="suborder" onclick=eraseCookie("'.$ruser.'")>Purchase order</button>';
 
 echo '</form>';
 

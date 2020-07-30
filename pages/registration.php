@@ -1,6 +1,7 @@
 <?php
 
 echo '<h3>Registration Form</h3>';
+echo '<hr>';
 
 if(!isset($_POST['regbtn'])) {
 
@@ -28,7 +29,7 @@ if(!isset($_POST['regbtn'])) {
                 <input type="file" class="form-control" name="imagepath">
             </label>
     </div>
-    <button type="submit" class="btn btn-primary" name="regbtn">Register</button>
+    <button type="submit" class="btn btn-outline-primary" name="regbtn">Register</button>
 </form>
 
 <?php
