@@ -380,7 +380,7 @@ class Item {
                         <td>$item->info</td>
                         <td><img src='cid:item' alt='item' height='100'></td>
                         </tr>";
-        }
+        } 
         $body .= '</table>';
 
         $mail->msgHTML($body);
