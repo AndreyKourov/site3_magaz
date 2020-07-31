@@ -372,14 +372,18 @@ class Item {
         $arrItem = [];
         foreach ($id_result as $id) {
             $item = self::fromDb($id);
+            $path = $item->imagepath;
+            $cid = md5($path);
             array_push($arrItem, $item->itemname, $item->pricesale, $item->info);
-            $mail->AddEmbeddedImage($item->imagepath, 'item'.++$i);
+            $mail->AddEmbeddedImage($path, $cid, 'item_'.$i);
+            //$mail->AddEmbeddedImage($item->imagepath, 'item'.++$i);
             $body .= "<tr>
                         <th>$item->itemname</th>
                         <td>$item->pricesale</td>
                         <td>$item->info</td>
-                        <td><img src='cid:item' alt='item' height='100'></td>
+                        <td><img src='cid:$cid' alt='item_$i' height='100'></td>
                         </tr>";
+                        ++$i;
         } 
         $body .= '</table>';
 
