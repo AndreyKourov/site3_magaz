@@ -355,7 +355,7 @@ class Item {
         $mail->Host = 'ssl://smtp.mail.ru';
         $mail->Port = 465;
         $mail->Username = MAIL;
-        $mail->Password = PASS;
+        $mail->Password = PASS; 
 
         //от кого
         $mail->setFrom('andreykourov@mail.ru', 'SHOP ANDREY');
