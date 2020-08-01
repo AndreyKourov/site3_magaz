@@ -7,6 +7,12 @@ https://github.com/carhartl/jquery-cookie
 http://blog.ox2.ru/php/rabota-s-csv-php/
 
 
+
+Доп ссылка для чтения по паттерну MVC:
+https://habr.com/ru/post/150267/
+
+
+
 ССЫЛКА НА ЭТОТ САЙТ 
 dz-site3-magaz.epizy.com
 

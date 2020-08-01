@@ -342,6 +342,7 @@ class Item {
 
     function SMTP($id_result) {
         //подключить модуль PHPMailer
+        
         require_once("PHPMailer/PHPMailerAutoload.php");
         require_once("private/private_data.php");
 
@@ -360,16 +361,19 @@ class Item {
         //от кого
         $mail->setFrom('andreykourov@mail.ru', 'SHOP ANDREY');
 
-        // кому
-        $mail->addAddress('andreykourov@mail.ru', 'ADMIN');
+        // кому petrovski_a@itstep.org
+        $mail->addAddress('petrovski_a@itstep.org', 'ADMIN');
 
         // тема письма
-        $mail->Subject = 'Новый заказ на сайте SHOP ANDREY';
+        $mail->Subject = 'Решение ДЗ 38 от Коурова Андрея';
 
         // Тело письма
         $body = "<table cellspacing='0' cellpadding='0' border='2' width='800' style='background-color: green!important'>";
         $i=0;
+        
+
         $arrItem = [];
+        
         foreach ($id_result as $id) {
             $item = self::fromDb($id);
             $path = $item->imagepath;
@@ -392,7 +396,7 @@ class Item {
 
         //CSV
         try {
-            $csv = new CSV("private/exel_file.csv");
+            $csv = new CSV("table/exel_file.csv");
             $csv->setCSV($arrItem);
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
@@ -408,13 +412,19 @@ class CSV {
     }
 
     function setCSV($arrItem) {
+        $items = array_chunk($arrItem, 3);
         //открываем csv фаил для дозаписи
         // +- если фаил не создан то создать его
         // a(append) дозаписать в конец файла
         $file = fopen($this->csv_file, 'a+');
-        foreach ($arrItem as $item) {
+        /*foreach ($arrItem as $item) {
             
             fputcsv($file, [$item]);
+        }
+        */
+        foreach($items as $item) {
+            $itemcsv = implode("; ", $item);
+            fputcsv($file, $item);
         }
         fclose($file);
     }
